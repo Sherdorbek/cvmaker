@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inkfold Studio — Warm Paper CV & Resume Maker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Navigation / Header Bar -->
+    <header class="top-nav no-print">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2.5c3.6 1.9 6 5.4 6 9.2 0 2.3-.9 4.5-2.5 6.2L12 21.5l-3.5-3.6A9.3 9.3 0 0 1 6 11.7c0-3.8 2.4-7.3 6-9.2z"></path>
+            <circle cx="12" cy="10.8" r="1.5"></circle>
+            <line x1="12" y1="12.3" x2="12" y2="17.2"></line>
+          </svg>
+        </span>
+        <span class="brand-title">Inkfold Studio</span>
+        <span class="brand-sub" data-i18n="brandSub">handcrafted resumes on warm paper</span>
+      </div>
+      <div class="nav-actions">
+        <select id="lang-select" class="tool-select lang-select" aria-label="Interface language">
+          <option value="uzb">🇺🇿 O'zbekcha</option>
+          <option value="rus">🇷🇺 Русский</option>
+          <option value="eng">🇬🇧 English</option>
+        </select>
+        <!-- 3-Dot More Actions Dropdown -->
+        <div class="dropdown" id="nav-dropdown">
+          <button type="button" id="btn-dropdown-toggle" class="btn btn-secondary btn-icon-only" title="More options" aria-haspopup="true" aria-expanded="false">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="1.5"></circle>
+              <circle cx="19" cy="12" r="1.5"></circle>
+              <circle cx="5" cy="12" r="1.5"></circle>
+            </svg>
+          </button>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <button type="button" id="btn-export-json" class="dropdown-item" role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span data-i18n="exportJson">Export JSON</span>
+            </button>
+            <button type="button" id="btn-import-json" class="dropdown-item" role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span data-i18n="importJson">Import JSON</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button type="button" id="btn-reset" class="dropdown-item dropdown-item-danger" role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span data-i18n="clear">Clear</span>
+            </button>
+            <button type="button" id="btn-sample" class="dropdown-item" role="menuitem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span data-i18n="fillSample">Fill Sample</span>
+            </button>
+          </div>
+        </div>
+        <input type="file" id="jsonFileInput" accept=".json,application/json" style="display: none;">
+        <button id="btn-print" class="btn btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          <span data-i18n="printPdf">Print / Save PDF</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile view switch: toggles between editor and preview panes -->
+    <div class="mobile-view-switch no-print" id="mobile-view-switch" role="tablist">
+      <button type="button" class="switch-btn active" data-view="editor" role="tab" aria-selected="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+        <span data-i18n="edit">Edit</span>
+      </button>
+      <button type="button" class="switch-btn" data-view="preview" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span data-i18n="preview">Preview</span>
+      </button>
+    </div>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+      <!-- Input Panel (Left) -->
+      <aside class="editor-pane no-print">
+        <div class="pane-content">
+          <!-- Personal Info -->
+          <section class="card">
+            <h2 class="section-title">Personal Details</h2>
+            <div class="form-grid">
+              <div class="field-group full photo-field-row">
+                <label data-i18n="photoOptional">Profile Photo (Optional)</label>
+                <div class="photo-upload-bar">
+                  <label for="photoInput" class="btn btn-secondary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                      <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    <span data-i18n="uploadPhoto">Upload Photo</span>
+                  </label>
+                  <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                  <button type="button" id="btn-remove-photo" class="btn btn-ghost" style="display: none;"><span data-i18n="removePhoto">Remove Photo</span></button>
+                  <img id="editor-photo-preview" class="editor-photo-preview" style="display: none;" alt="Photo thumbnail">
+                </div>
+              </div>
+              <div class="field-group full">
+                <label for="fullName" data-i18n="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="e.g. Eleanor Vance" data-i18n-ph="phFullname">
+              </div>
+              <div class="field-group full">
+                <label for="headline" data-i18n="headline">Professional Title</label>
+                <input type="text" id="headline" placeholder="e.g. Senior Architectural Designer" data-i18n-ph="phHeadline">
+              </div>
+              <div class="field-group">
+                <label for="email" data-i18n="email">Email Address</label>
+                <input type="email" id="email" placeholder="eleanor@studio.co" data-i18n-ph="phEmail">
+              </div>
+              <div class="field-group">
+                <label for="phone" data-i18n="phone">Phone</label>
+                <input type="tel" id="phone" placeholder="+1 (555) 234-8901" data-i18n-ph="phPhone">
+              </div>
+              <div class="field-group">
+                <label for="location" data-i18n="location">Location</label>
+                <input type="text" id="location" placeholder="Portland, OR" data-i18n-ph="phLocation">
+              </div>
+              <div class="field-group">
+                <label for="website" data-i18n="website">Portfolio / Link</label>
+                <input type="text" id="website" placeholder="eleanorvance.design" data-i18n-ph="phWebsite">
+              </div>
+              <div class="field-group full">
+                <label for="summary" data-i18n="summary">Profile Summary</label>
+                <textarea id="summary" rows="3" placeholder="Brief narrative highlighting your trajectory, philosophy, and expertise..." data-i18n-ph="phSummary"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Experience Section -->
+          <section class="card">
+            <div class="section-header">
+              <h2 class="section-title" data-i18n="experience">Experience</h2>
+              <button id="add-experience-btn" class="btn-text"><span data-i18n="addRole">+ Add Role</span></button>
+            </div>
+            <div id="experience-list" class="dynamic-list"></div>
+          </section>
+
+          <!-- Education Section -->
+          <section class="card">
+            <div class="section-header">
+              <h2 class="section-title" data-i18n="education">Education</h2>
+              <button id="add-education-btn" class="btn-text"><span data-i18n="addDegree">+ Add Degree</span></button>
+            </div>
+            <div id="education-list" class="dynamic-list"></div>
+          </section>
+
+          <!-- Achievements Section -->
+          <section class="card">
+            <div class="section-header">
+              <h2 class="section-title" data-i18n="honorsSection">Honors & Achievements</h2>
+              <button id="add-achievement-btn" class="btn-text"><span data-i18n="addAchievement">+ Add Achievement</span></button>
+            </div>
+            <div id="achievements-list" class="dynamic-list"></div>
+          </section>
+
+          <!-- Skills Section -->
+          <section class="card">
+            <div class="section-header">
+              <h2 class="section-title" data-i18n="skillsSection">Skills & Proficiencies</h2>
+              <button id="add-skill-btn" class="btn-text"><span data-i18n="addSkill">+ Add Skill</span></button>
+            </div>
+            <div id="skills-list" class="dynamic-list"></div>
+          </section>
+        </div>
+      </aside>
+
+      <!-- Draggable Splitter -->
+      <div class="pane-resizer no-print" id="pane-resizer" role="separator" aria-orientation="vertical" title="Drag to resize"></div>
+
+      <!-- Live Sheet Preview (Right) -->
+      <section class="preview-pane">
+        <!-- Floating Document Typography Toolbar -->
+        <div class="sheet-toolbar no-print">
+          <div class="tool-group">
+            <label for="tool-theme">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"></path></svg>
+              Theme
+            </label>
+            <select id="tool-theme" class="tool-select">
+              <option value="warm-classic" selected>Warm Paper (Classic)</option>
+              <option value="modern-navy">Executive Navy (Split)</option>
+              <option value="mono-split">Minimal Mono (Grayscale)</option>
+            </select>
+          </div>
+
+          <div class="tool-divider"></div>
+
+          <div class="tool-group">
+            <label for="tool-font">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+              Font
+            </label>
+            <select id="tool-font" class="tool-select">
+              <option value="lora" selected>Lora (Serif)</option>
+              <option value="fraunces">Fraunces (Serif)</option>
+              <option value="times">Times New Roman</option>
+              <option value="garamond">EB Garamond</option>
+              <option value="newsreader">Newsreader</option>
+              <option value="sans">Jakarta (Sans)</option>
+              <option value="inter">Inter (Sans)</option>
+              <option value="mono">JetBrains Mono</option>
+            </select>
+          </div>
+
+          <div class="tool-divider"></div>
+
+          <div class="tool-group">
+            <label for="tool-size">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14"></path><path d="M2 19h20"></path></svg>
+              Size
+            </label>
+            <select id="tool-size" class="tool-select">
+              <option value="12">12px</option>
+              <option value="13">13px</option>
+              <option value="14" selected>14px</option>
+              <option value="15">15px</option>
+              <option value="16">16px</option>
+              <option value="18">18px</option>
+            </select>
+          </div>
+
+          <div class="tool-divider"></div>
+
+          <div class="tool-group">
+            <label for="tool-spacing">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
+              Line Spacing
+            </label>
+            <select id="tool-spacing" class="tool-select">
+              <option value="tight">Tight</option>
+              <option value="normal" selected>Balanced</option>
+              <option value="relaxed">Relaxed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="preview-wrapper" id="preview-wrapper">
+          <!-- Dynamically paginated A4 sheets (.paper-sheet) will render here -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
