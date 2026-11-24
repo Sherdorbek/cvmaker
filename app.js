@@ -944,6 +944,8 @@ if (singlePage && singlePage.querySelector(".sheet-fit")) autoFitSheet(singlePag
 const A4_SHEET_HEIGHT = 1122;
 // Exact print width of the sheet (210mm @ 96dpi) — matches @media print.
 const A4_PRINT_WIDTH = 794;
+// Usable content height in print: 297mm - 12mm top - 15mm bottom padding (~1020px @96dpi).
+const A4_PRINT_CONTENT_HEIGHT = 1020;
 
 let fitProbeHost = null;
 function getFitProbeHost() {
@@ -1001,6 +1003,43 @@ function autoFitSheet(pageEl) {
   fitWrap.style.transformOrigin = "top left";
   fitWrap.style.transform = `scale(${scale})`;
   fitWrap.style.width = `${100 / scale}%`;
+}
+
+// Hidden A4-width page used to measure pagination exactly as it will print.
+// The on-screen sheet can be narrower (mobile) and has different padding, so
+// measuring it directly breaks blocks prematurely.
+let paginationProbePage = null;
+function getPaginationProbePage() {
+  if (!paginationProbePage) {
+    const host = document.createElement("div");
+    host.style.cssText =
+      "position:absolute;left:-99999px;top:0;visibility:hidden;pointer-events:none;";
+    const page = document.createElement("div");
+    page.className = "paper-sheet";
+    page.style.width = A4_PRINT_WIDTH + "px";
+    host.appendChild(page);
+    document.body.appendChild(host);
+    paginationProbePage = page;
+  }
+  return paginationProbePage;
+}
+
+// Mirror a real page's current children into the probe so the next block is
+// measured after all preceding margins/contents at the exact print width.
+function syncPaginationProbe(pageEl) {
+  const probe = getPaginationProbePage();
+  probe.innerHTML = "";
+  Array.from(pageEl.children).forEach((child) => probe.appendChild(child.cloneNode(true)));
+  return probe;
+}
+
+function probeBlockBottom(probe, blockEl) {
+  const clone = blockEl.cloneNode(true);
+  probe.appendChild(clone);
+  const styles = getComputedStyle(probe);
+  const topInset =
+    parseFloat(styles.paddingTop || 0) + parseFloat(styles.borderTopWidth || 0);
+  return clone.getBoundingClientRect().bottom - probe.getBoundingClientRect().top - topInset;
 }
 
 // 1. Warm Paper (Classic Multi-Page Engine)
@@ -1162,12 +1201,9 @@ function renderWarmClassic(previewWrapper) {
   }
 
   // Multi-Page Layout Flow Engine
-  // NOTE: The screen limit must match the PRINT layout, not the screen padding.
-  // In @media print the sheet is 297mm tall with 20mm top + 15mm bottom padding,
-  // so printable content is only ~262mm (~990px). Allowing content up to the
-  // screen padding limit pushed overflow onto a blank page when printing.
-  const A4_PAGE_BOTTOM_LIMIT = 985;
-
+  // Measure each block in an exact A4 print-width probe and compare it with the
+  // printable content box (990px). Measuring the on-screen sheet pushed blocks
+  // to the next page while there was still room in the printed page.
   function createNewPage() {
     const page = document.createElement("div");
     page.className = "paper-sheet";
@@ -1176,26 +1212,20 @@ function renderWarmClassic(previewWrapper) {
   }
 
   let currentPage = createNewPage();
+  let probe = syncPaginationProbe(currentPage);
 
   blocks.forEach((block) => {
     currentPage.appendChild(block.el);
+    const relativeBottom = probeBlockBottom(probe, block.el);
 
-    const pageRect = currentPage.getBoundingClientRect();
-    const elRect = block.el.getBoundingClientRect();
-    const relativeBottom = elRect.bottom - pageRect.top;
-
-    if (relativeBottom > A4_PAGE_BOTTOM_LIMIT && currentPage.children.length > 1) {
+    if (relativeBottom > A4_PRINT_CONTENT_HEIGHT - 2 && currentPage.children.length > 1) {
       const prevChild = block.el.previousElementSibling;
       const wasTitle = prevChild && prevChild.classList.contains("sheet-section-title");
 
       currentPage.removeChild(block.el);
-
-      if (wasTitle) {
-        currentPage.removeChild(prevChild);
-      }
+      if (wasTitle) currentPage.removeChild(prevChild);
 
       currentPage = createNewPage();
-
       if (wasTitle) {
         currentPage.appendChild(prevChild);
       } else if (block.type === "item" && block.titleText) {
@@ -1204,8 +1234,11 @@ function renderWarmClassic(previewWrapper) {
         contTitle.textContent = `${block.titleText} ${t("contSuffix")}`;
         currentPage.appendChild(contTitle);
       }
-
       currentPage.appendChild(block.el);
+
+      // Rebuild the probe from the new page so subsequent blocks are measured
+      // against its actual content (including the continuation title).
+      probe = syncPaginationProbe(currentPage);
     }
   });
 }

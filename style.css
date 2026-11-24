@@ -1768,6 +1768,14 @@ textarea {
     display: block;
   }
 
+  /* The mobile Edit/Preview toggle hides the sheet via .only-editor/.only-preview.
+     Printing uses a narrow page, so that media query still applies — force the
+     resume sheet back into the printed document. */
+  .workspace.only-editor .preview-pane,
+  .workspace.only-preview .editor-pane {
+    display: block !important;
+  }
+
   .preview-pane {
     height: auto !important;
     overflow: visible !important;
@@ -1787,7 +1795,7 @@ textarea {
     min-height: 297mm !important;
     max-height: 297mm !important;
     margin: 0 !important;
-    padding: 20mm 20mm 15mm !important;
+    padding: 12mm 20mm 15mm !important;
     background: #fff !important;
     border: none !important;
     border-radius: 0 !important;
